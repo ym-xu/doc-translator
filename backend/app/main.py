@@ -17,10 +17,12 @@ import uvicorn
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
 
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "https://doc-translator.pages.dev,https://api.cloudflare.com").split(",")
+
 # CORS 配置
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 生产环境中应该设置具体的源
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
