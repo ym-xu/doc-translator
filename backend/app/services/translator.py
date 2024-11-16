@@ -11,22 +11,22 @@ client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
 class TranslatorService:
     TRANSLATION_PROMPT = """
-        你是一名资深的翻译工作者，你的目标是帮助用户将指定文本内容翻译为中文。
-        你必须满足以下要求：
-        - 如果需要翻译的文本内容为空，则无需输出任何内容。请不要输出抱歉等任何说明和描述。
-        - 下面为一些翻译时参考的角度，你需要考虑这些角度来确保翻译的准确性。
-            - "准确性"：翻译内容需要尽可能准确地表达原文的意思。
-            - "数字、公式、特殊符号与网址"：如果翻译内容涉及到数字、公式、特殊符号与网址，你无需对数字、公式、特殊符号与网址进行翻译，仅确保数字、公式、特殊符号与网址不变即可。
-            - "术语"：在专业领域中，很多词汇有特定的含义，需要确保这些术语被准确地翻译。
-            - "语境"：理解原文的语境对于准确翻译非常重要。你需要需要确认具体语境。
-            - "语言风格"：如果原文是在特定的语言风格（如正式、口语、学术等）下写的，翻译时也应尽可能保持这种风格。
-            - "文化差异"：有些表达方式可能在一种语言中很常见，但在另一种语言中却很少见。在翻译时，需要考虑这些文化差异。
-            - "句子结构"：不同语种的句子结构有很大的不同，尤其是中文和英文。翻译时需要对这些差异有所了解。
-            - "专业知识"：如果原文涉及到特定的专业知识，翻译时可能需要结合专业知识相关的内容以确保准确性。
-            - "格式"：翻译内容需要保持原文的格式，包括段落、标题、列表等。
-    下面为指定需要翻译的文本内容，你无需返回原文，无需给出任何说明和描述，仅提供最终翻译结果。
-    {text}
-    """
+        You are a senior translator, and your goal is to help users translate specified text content into Chinese.
+        You must meet the following requirements:
+        - If the text content to be translated is empty, no output is required. Please do not output any apologies or descriptions.
+        - Below are some aspects to consider when translating to ensure accuracy.
+            - "Accuracy": The translation needs to accurately express the meaning of the original text.
+            - "Numbers, Formulas, Special Symbols and URLs": If the translation involves numbers, formulas, special symbols and URLs, you don't need to translate them, just keep them unchanged.
+            - "Terminology": In professional fields, many terms have specific meanings, and these terms need to be accurately translated.
+            - "Context": Understanding the context of the original text is very important for accurate translation. You need to confirm the specific context.
+            - "Language Style": If the original text is written in a specific language style (such as formal, colloquial, academic, etc.), try to maintain this style in the translation.
+            - "Cultural Differences": Some expressions may be common in one language but rare in another. These cultural differences need to be considered in translation.
+            - "Sentence Structure": Different languages have very different sentence structures, especially Chinese and English. These differences need to be understood when translating.
+            - "Professional Knowledge": If the original text involves specific professional knowledge, you may need to combine relevant professional knowledge to ensure accuracy.
+            - "Format": The translation needs to maintain the format of the original text, including paragraphs, titles, lists, etc.
+        Below is the specified text content to be translated. You don't need to return the original text, no explanations or descriptions are needed, just provide the final translation result.
+        {text}
+        """
 
     @staticmethod
     async def translate_text(text: str, target_language: str) -> str:

@@ -42,88 +42,88 @@ async def process_translation(job_id: str, file_path: str, translated_path: str,
     """后台任务处理翻译"""
     try:
         if job_id not in jobs:
-            print(f"任务 {job_id} 不存在")
+            print(f"Task {job_id} does not exist")
             return
             
         job = jobs[job_id]
         job.status = JobStatus.PROCESSING
-        print(f"开始处理任务 {job_id}")
+        print(f"Starting to process task {job_id}")
         
         # 提取文本
         try:
-            print(f"开始提取PDF文本: {file_path}")
+            print(f"Starting to extract PDF text: {file_path}")
             text_blocks = await PDFService.extract_text(file_path)
-            print(f"成功提取文本，共 {len(text_blocks)} 个文本块")
+            print(f"Successfully extracted text, total {len(text_blocks)} text blocks")
             
             # 打印前两个文本块示例
             if text_blocks:
-                print("文本块示例:")
+                print("Text block examples:")
                 for i, (page, block_info) in enumerate(text_blocks[:2]):
-                    print(f"页码 {page}: {block_info['text'][:100]}...")
+                    print(f"Page {page}: {block_info['text'][:100]}...")
             
         except Exception as e:
-            print(f"PDF文本提取失败: {str(e)}")
+            print(f"PDF text extraction failed: {str(e)}")
             job.status = JobStatus.FAILED
-            job.error = f"PDF文本提取失败: {str(e)}"
+            job.error = f"PDF text extraction failed: {str(e)}"
             return
             
         # 翻译文本
         try:
-            print(f"开始翻译文本到 {target_language}")
+            print(f"Starting translation to {target_language}")
             async def update_progress(progress: float):
                 job.progress = progress
-                print(f"翻译进度: {progress:.2f}%")
+                print(f"Translation progress: {progress:.2f}%")
             
             translated_blocks = await TranslatorService.translate_blocks(
                 text_blocks,
                 target_language,
                 update_progress
             )
-            print("翻译完成")
+            print("Translation completed")
             
         except Exception as e:
-            print(f"翻译失败: {str(e)}")
+            print(f"Translation failed: {str(e)}")
             job.status = JobStatus.FAILED
-            job.error = f"翻译失败: {str(e)}"
+            job.error = f"Translation failed: {str(e)}"
             return
             
         # 创建新PDF
         try:
-            print("开始生成翻译后的PDF")
+            print("Starting to generate translated PDF")
             output_path = f"{settings.UPLOAD_DIR}/translated_{job.file_name}"
             await PDFService.create_translated_pdf(file_path, translated_blocks, output_path)
-            print(f"PDF生成完成: {output_path}")
+            print(f"PDF generation completed: {output_path}")
             
             # 上传到R2存储
-            print("开始上传到R2存储")
+            print("Starting upload to R2 storage")
             result_url = await storage_service.upload_file(
                 output_path,
                 f"translated/{job_id}/{job.file_name}"
             )
-            print(f"上传完成，URL: {result_url}")
+            print(f"Upload completed, URL: {result_url}")
             
             # 更新任务状态
             job.status = JobStatus.COMPLETED
             job.result_url = result_url
             job.progress = 100
-            print(f"任务 {job_id} 处理完成，result_url: {result_url}")
+            print(f"Task {job_id} processing completed, result_url: {result_url}")
             
             # 清理临时文件
             os.remove(file_path)
             os.remove(output_path)
-            print("临时文件清理完成")
+            print("Temporary files cleaned up")
             
         except Exception as e:
-            print(f"PDF生成或上传失败: {str(e)}")
+            print(f"PDF generation or upload failed: {str(e)}")
             job.status = JobStatus.FAILED
-            job.error = f"PDF生成或上传失败: {str(e)}"
+            job.error = f"PDF generation or upload failed: {str(e)}"
             try:
                 os.remove(file_path)
             except:
                 pass
             
     except Exception as e:
-        print(f"任务处理失败: {str(e)}")
+        print(f"Task processing failed: {str(e)}")
         if job_id in jobs:
             jobs[job_id].status = JobStatus.FAILED
             jobs[job_id].error = str(e)

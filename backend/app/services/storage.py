@@ -15,7 +15,7 @@ class StorageService:
         self.bucket = settings.R2_BUCKET_NAME
 
     async def upload_file(self, file_path: str, object_name: str) -> str:
-        """上传文件到R2存储"""
+        """Upload file to R2 storage"""
         try:
             self.s3.upload_file(file_path, self.bucket, object_name)
             url = self.s3.generate_presigned_url(
@@ -26,11 +26,11 @@ class StorageService:
             print(f"Generated presigned URL: {url}")
             return url
         except Exception as e:
-            raise Exception(f"文件上传失败: {str(e)}")
+            raise Exception(f"File upload failed: {str(e)}")
 
     async def download_file(self, object_name: str, file_path: str):
-        """从R2存储下载文件"""
+        """Download file from R2 storage"""
         try:
             self.s3.download_file(self.bucket, object_name, file_path)
         except Exception as e:
-            raise Exception(f"文件下载失败: {str(e)}")
+            raise Exception(f"File download failed: {str(e)}")
