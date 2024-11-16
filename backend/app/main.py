@@ -10,19 +10,23 @@ import uuid
 import aiofiles
 from typing import Dict
 
+# 删除代理设置，在 Render 上不需要
 # os.environ["http_proxy"] = "http://127.0.0.1:7890"
 # os.environ["https_proxy"] = "http://127.0.0.1:7890"
 
 app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)
 
-# 添加CORS中间件
+# CORS 配置
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 在生产环境中应该设置具体的源
+    allow_origins=["*"],  # 生产环境中应该设置具体的源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 确保上传目录存在
+os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
 
 # 存储任务状态
 jobs: Dict[str, TranslationJob] = {}
@@ -193,11 +197,17 @@ async def download_result(job_id: str):
     
     return {"url": job.result_url}
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 if __name__ == "__main__":
     import uvicorn
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(
-        "app.main:app",
+        app,
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 8000)),
-        reload=False
+        port=port,
+        proxy_headers=True,
+        forwarded_allow_ips="*"
     )
