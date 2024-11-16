@@ -4,7 +4,7 @@ import TranslationControls from './components/TranslationControls';
 import LoadingSpinner from './components/LoadingSpinner';
 import './App.css';
 import './index.css'
-import { Rocket, FileType, Shield, Upload as UploadIcon } from 'lucide-react'
+import { Rocket, FileType, Shield } from 'lucide-react'
 import { Card, CardContent } from './components/ui/card';
 
 function App() {
