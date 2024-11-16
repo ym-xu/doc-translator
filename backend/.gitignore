@@ -36,3 +36,5 @@ yarn-error.log*
 
 # Uploads
 backend/uploads/
+
+wrangler.toml

@@ -30,7 +30,8 @@ function App() {
       formData.append('source_language', sourceLanguage);
       formData.append('target_language', targetLanguage);
       
-      const response = await fetch('http://localhost:8000/api/translate', {
+      const API_URL = process.env.REACT_APP_API_URL || 'https://doc-translator.onrender.com';
+      const response = await fetch(`${API_URL}/api/translate`, {
         method: 'POST',
         body: formData,
       });
