@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
     UPLOAD_DIR: str = "uploads"
+    PORT: int = int(os.getenv("PORT", "10000"))
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")  # 显式从环境变量加载
     CLOUDFLARE_ACCOUNT_ID: str
     CLOUDFLARE_ACCESS_KEY_ID: str
@@ -22,10 +23,3 @@ class Settings(BaseSettings):
         env_file_encoding = 'utf-8'
 
 settings = Settings()
-
-# 添加调试信息
-print("=== Settings Debug ===")
-print(f"OPENAI_API_KEY loaded: {'*' * len(settings.OPENAI_API_KEY)}")
-print("===================")
-
-print(settings)

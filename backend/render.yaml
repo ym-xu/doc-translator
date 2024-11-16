@@ -3,8 +3,10 @@ services:
     name: doc-translator-api
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+    startCommand: python -c "from app.main import start; start()"
     envVars:
+      - key: PORT
+        value: 10000
       - key: OPENAI_API_KEY
         sync: false
       - key: CLOUDFLARE_ACCOUNT_ID
