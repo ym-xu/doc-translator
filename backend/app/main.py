@@ -25,8 +25,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 确保上传目录存在
-os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+# 在应用启动时创建上传目录
+upload_dir = os.path.join(os.path.dirname(__file__), "..", settings.UPLOAD_DIR)
+os.makedirs(upload_dir, exist_ok=True)
 
 # 存储任务状态
 jobs: Dict[str, TranslationJob] = {}
@@ -200,14 +201,3 @@ async def download_result(job_id: str):
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
-
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=port,
-        proxy_headers=True,
-        forwarded_allow_ips="*"
-    )

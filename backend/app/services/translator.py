@@ -4,8 +4,8 @@ import asyncio
 from ..config import settings
 import os
 
-os.environ["http_proxy"] = "http://127.0.0.1:7890"
-os.environ["https_proxy"] = "http://127.0.0.1:7890"
+# os.environ["http_proxy"] = "http://127.0.0.1:7890"
+# os.environ["https_proxy"] = "http://127.0.0.1:7890"
 
 client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
