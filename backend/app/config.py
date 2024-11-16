@@ -10,13 +10,11 @@ class Settings(BaseSettings):
     VERSION: str = "1.0.0"
     API_PREFIX: str = "/api"
     UPLOAD_DIR: str = "uploads"
-    PORT: int = int(os.getenv("PORT", "10000"))
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")  # 显式从环境变量加载
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     CLOUDFLARE_ACCOUNT_ID: str
     CLOUDFLARE_ACCESS_KEY_ID: str
     CLOUDFLARE_ACCESS_KEY_SECRET: str
     R2_BUCKET_NAME: str
-    # PDF_FONT_PATH: str = "fonts/SourceHanSerif-VF.ttf"
     
     class Config:
         env_file = ".env"
