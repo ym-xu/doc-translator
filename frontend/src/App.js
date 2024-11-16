@@ -46,7 +46,7 @@ function App() {
       
       // 开始轮询任务状态
       const pollInterval = setInterval(async () => {
-        const statusResponse = await fetch(`http://localhost:8000/api/jobs/${jobId}`);
+        const statusResponse = await fetch(`${API_URL}/api/jobs/${jobId}`);
         const jobStatus = await statusResponse.json();
         console.log('Job status:', jobStatus);
         
