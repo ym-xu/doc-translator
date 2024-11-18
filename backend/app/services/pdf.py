@@ -60,11 +60,15 @@ class PDFService:
                         if not block_text:
                             continue
                         
+                        # 转换颜色格式
+                        color = colors[0] if colors else 0
+                        rgb_color = PDFService.rgb_to_color(color)
+                        
                         block_info = {
                             "text": block_text,
                             "rect": list(block["bbox"]),
                             "size": max(set(sizes), key=sizes.count) if sizes else 12,
-                            "color": colors[0] if colors else 0,
+                            "color": rgb_color,
                             "original_font": font_info[0] if font_info else "Helvetica"
                         }
                         text_blocks.append((page_num + 1, block_info))
@@ -72,7 +76,7 @@ class PDFService:
             doc.close()
             return text_blocks
         except Exception as e:
-            raise Exception(f"PDF文本提取失败: {str(e)}")
+            raise Exception(f"PDF text extraction failed: {str(e)}")
 
     @staticmethod
     async def create_translated_pdf(
@@ -104,14 +108,13 @@ class PDFService:
                     continue
                     
                 try:
-                    # 使用基础字体
                     font_size = block_info["size"]
                     rect_height = rect.height
                     rect_width = rect.width
                     is_vertical = rect_height / rect_width > 10
                     
                     # 使用内置中文字体
-                    font_name = "china-s"  # PyMuPDF内置中文字体
+                    font_name = "china-s"
                     
                     if is_vertical:
                         # 垂直文本
@@ -120,7 +123,7 @@ class PDFService:
                             text=text,
                             fontname=font_name,
                             fontsize=font_size,
-                            color=(0, 0, 0),
+                            color=block_info["color"],
                             rotate=90
                         )
                     else:
@@ -132,34 +135,28 @@ class PDFService:
                                     text,
                                     fontname=font_name,
                                     fontsize=font_size,
-                                    color=(0, 0, 0),
+                                    color=block_info["color"],
                                     align=fitz.TEXT_ALIGN_LEFT
                                 )
                                 if rc >= 0:
                                     break
                                 font_size *= 0.95
                                 if font_size < 4:
-                                    print(f"文本过长无法适配: {text[:50]}...")
+                                    print(f"Text too long to fit: {text[:50]}...")
                                     break
                             except Exception as e:
-                                print(f"写入失败，尝试减小字体: {str(e)}")
+                                print(f"Write failed, trying smaller font: {str(e)}")
                                 font_size *= 0.95
                                 if font_size < 4:
                                     break
                                 
                 except Exception as e:
-                    print(f"处理文本块失败: {str(e)}, 文本: {text[:50]}...")
+                    print(f"Failed to process text block: {str(e)}, text: {text[:50]}...")
                     continue
             
             # 保存文件
-            doc.save(
-                output_path,
-                clean=True,
-                garbage=4,
-                deflate=True,
-                pretty=False
-            )
+            doc.save(output_path, clean=True, garbage=4, deflate=True, pretty=False)
             doc.close()
             
         except Exception as e:
-            raise Exception(f"创建翻译PDF失败: {str(e)}")
+            raise Exception(f"Failed to create translated PDF: {str(e)}")
